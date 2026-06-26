@@ -8,7 +8,7 @@ pipeline {
 
   environment {
     REPO  = 'k8s-test-core-server'
-    IMAGE = "ghcr.io/${GH_ORG}/${REPO}"
+    IMAGE = "ghcr.io/${env.GH_ORG.toLowerCase()}/${REPO}"
   }
 
   options {
