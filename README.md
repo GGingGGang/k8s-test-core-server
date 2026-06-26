@@ -2,33 +2,23 @@
 
 Go 1.23 / chi — MSA domain API service.
 
-## Overview
+## Status
 
-HTTP API server handling domain entities (users, orders, etc.) with JWT authentication,
-MySQL persistence, Redis caching, and Kafka event publishing.
+Bootstrap stage. HTTP server exposing health/readiness endpoints, built and shipped
+through Kaniko → GHCR → ArgoCD onto Kubernetes, fronted by the Istio Gateway at
+`api.${domain}/v1/core`. Domain logic (entities, persistence, auth, events,
+observability) is planned — see Roadmap.
 
 ## Ports
 
 | Port | Purpose |
 |------|---------|
 | `8080` | HTTP API |
-| `9090` | `/metrics` (Prometheus / OTel) |
 
 ## Environment Variables
 
 ```bash
-HTTP_PORT=8080
-OTEL_SERVICE_NAME=core
-OTEL_RESOURCE_ATTRIBUTES=service.namespace=core,service.version=<git-sha>
-OTEL_EXPORTER_OTLP_ENDPOINT=http://alloy.monitoring.svc:4317
-OTEL_EXPORTER_OTLP_PROTOCOL=grpc
-OTEL_METRICS_EXPORTER=prometheus
-OTEL_TRACES_EXPORTER=otlp
-OTEL_LOGS_EXPORTER=none
-OTEL_PROMETHEUS_HOST=0.0.0.0
-OTEL_PROMETHEUS_PORT=9090
-OTEL_EXEMPLAR_FILTER=trace_based
-TZ=UTC
+HTTP_PORT=8080   # listen port (default 8080)
 ```
 
 ## Local Development
@@ -37,7 +27,6 @@ TZ=UTC
 go mod download
 go run ./cmd/server
 go test ./...
-golangci-lint run
 ```
 
 ## Build
@@ -50,7 +39,10 @@ docker build --build-arg GIT_SHA=$(git rev-parse --short HEAD) -t core .
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/healthz` | Liveness probe |
-| GET | `/readyz` | Readiness probe |
+| GET | `/healthz` | Liveness probe → `{"status":"ok"}` |
+| GET | `/readyz` | Readiness probe → `{"status":"ready"}` |
 
-See `PLAN.md` for full roadmap and `../CONTRACTS.md` for cross-service contracts.
+## Roadmap
+
+Not yet implemented: domain entity CRUD, MySQL persistence (HeatWave), Redis cache,
+Kafka event publishing, JWT auth middleware, OpenTelemetry metrics/traces on `:9090`.
