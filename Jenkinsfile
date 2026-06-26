@@ -31,7 +31,9 @@ pipeline {
             --cache-ttl=168h \
             --customPlatform=linux/arm64 \
             --snapshot-mode=redo \
-            --use-new-run
+            --use-new-run \
+            --ignore-path=/busybox \
+            --ignore-path=/home/jenkins
         '''
       }
     }
