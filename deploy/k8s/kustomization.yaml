@@ -6,5 +6,5 @@ resources:
   - service.yaml
 images:
   - name: core
-    newName: ghcr.io/GGingGGang/k8s-test-core-server
+    newName: ghcr.io/ggingggang/k8s-test-core-server
     newTag: latest
